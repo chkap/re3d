@@ -8,5 +8,13 @@ require.config({
     baseUrl: 'scripts/',
 });
 
-require(['re3d', 'camera'], ()=>{});
+
+require(['scripts/system'], (system)=>{
+    "use strict";
+    if(document.readyState === 'complete'){
+        system.initGL('canvas');
+    }else{
+        window.addEventListener('load', ()=>system.initGL('canvas'))
+    }
+});
 
