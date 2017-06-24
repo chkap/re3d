@@ -9,7 +9,7 @@ require.config({
 });
 
 
-require(['scripts/system'], (system)=>{
+require(['system'], (system)=>{
     "use strict";
     if(document.readyState === 'complete'){
         system.initGL('canvas');

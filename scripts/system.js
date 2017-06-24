@@ -6,26 +6,25 @@
 
 define(['camera'], (camera)=>{
 
-    function initGL(canvas_id) {
-        try {
-            let canvas = document.getElementById(canvas_id);
-            gl = canvas.getContext("experimental-webgl");
-            gl.viewport(0, 0, canvas.width, canvas.height);
-            gl.clearColor(0,0,0,1);
-            gl.clear(gl.COLOR_BUFFER_BIT);
-        } catch(e) {
+    class System{
+        constructor(canvas){
+            gl = canvas.getContext('webgl2');
+            if(!gl){
+                console.error('fail to init webgl2 context')
+                return;
+            }
+            this._gl = gl;
+            this._canvas = canvas;
+            this._scene = null;
+            this._camera = null;
         }
-        if (!gl) {
-            alert("Could not initialise WebGL, sorry :-(");
-            return;
-        }
-        console.log('init finished.');
-        let cam = new camera.Camera();
-        cam.show_count();
-        cam.inc_count();
-        cam.show_count();
+
+        get gl(){return this._gl;}
+
     }
-    return {initGL}
+
+
+    return {System}
 });
 
 
