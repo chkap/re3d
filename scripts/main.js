@@ -1,7 +1,6 @@
 /**
  * Created by chkap on 17-6-22.
  */
-"use strict";
 
 
 require.config({
@@ -9,7 +8,7 @@ require.config({
 });
 
 
-require(['system'], (mod_system)=>{
+require(['system', 'geo_obj'], (mod_system, mod_geo_obj)=>{
     "use strict";
 
     function startSystem(){
@@ -19,6 +18,11 @@ require(['system'], (mod_system)=>{
             let system = new mod_system.System(canvas);
             if (!system.gl){
                 return;
+            }
+
+            for (let i = 0; i< 100; i++){
+                let pot = new mod_geo_obj.GeoPoint(Math.random()*10, Math.random()*10, Math.random()*10);
+                system.scene.addObject(pot);
             }
             system.startRendering();
         }

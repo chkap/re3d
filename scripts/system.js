@@ -22,6 +22,7 @@ define(['camera', 'scene'], (mod_camera, mod_scene)=>{
         }
 
         get gl(){return this._gl;}
+        get scene() {return this._scene;}
 
         _renderScene(){
             this._scene.render();
@@ -30,13 +31,13 @@ define(['camera', 'scene'], (mod_camera, mod_scene)=>{
         renderScene(timestamp){
             this._renderScene();
             if (this._do_rendering){
-                window.requestAnimationFrame(this.renderScene);
+                window.requestAnimationFrame((timestamp)=>this.renderScene(timestamp));
             }
         }
 
         startRendering(){
             this._do_rendering = true;
-            window.requestAnimationFrame(this.renderScene);
+            window.requestAnimationFrame((timestamp)=>this.renderScene(timestamp));
         }
 
         stopRendering(){

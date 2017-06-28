@@ -10,7 +10,7 @@ define(['program'], function (mod_program) {
         constructor(system){
             this._system = system;
             this._program_manager = new mod_program.ProgramManager(this._system.gl);
-            this.clear_color = [0.0,0.0,0.0,1.0];
+            this.clear_color = [1.0,1.0,1.0,1.0];
             this._obj_set = new Set();
         }
 
@@ -24,7 +24,7 @@ define(['program'], function (mod_program) {
 
         render(){
             let gl = this._system.gl;
-            gl.clearColor(this.clear_color);
+            gl.clearColor(this.clear_color[0], this.clear_color[1], this.clear_color[2], this.clear_color[3]);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
             for(let obj of this._obj_set){

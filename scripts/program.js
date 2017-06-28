@@ -3,27 +3,22 @@
  */
 
 
-define([], function () {
+define(function () {
 
     class ProgramManager{
 
         constructor(gl){
             this._gl = gl;
             this._program_map = new Map();
+            this._current_program = '';
         }
 
-        getWebglContext(){
-            return this._gl;
-        }
+        get gl() {return this._gl;}
 
         _createProgram(prog_class){
-            if (Object.getPrototypeOf(prog_class) !== _BaseProgram){
-                alert('cannot create a program not defined.');
-                return;
-            }
             if(this._program_map.has(prog_class.programName))
                 return;
-            let program_instance = new prog_class();
+            let program_instance = new prog_class(this._gl);
             this._program_map.set(prog_class.programName, program_instance)
         }
 
@@ -33,40 +28,56 @@ define([], function () {
                 return;
             }
             if (!this._program_map.has(prog_class.programName)){
-                this._createProgram(prog_class)
+                this._createProgram(prog_class);
+                this._program_map.get(prog_class.programName).enable();
+                this._current_program = prog_class.programName;
             }
-            this._program_map.get(prog_class.programName).enable();
+            let cur_program = this._program_map.get(prog_class.programName);
+            if (prog_class.programName !== this._current_program){
+                cur_program.enable();
+                this._current_program = prog_class.programName;
+                return cur_program;
+            }else{
+                return cur_program;
+            }
+
         }
     }
 
     class _BaseProgram{
         constructor(gl, vertex_source, fragment_source){
             this._gl = gl;
+            if (!this._gl){
+                console.error('webgl context missing. fail to construct _BaseProgram');
+                return;
+            }
             this._vertex_source = vertex_source;
             this._fragment_source = fragment_source;
             this._compileProgram();
         }
 
         _compileProgram(){
-            this._vertex_shader = gl.createShader(gl.VERTEX_SHADER);
-            gl.compileShader(this._vertex_shader, this._vertex_source);
-            if (!gl.getShaderParameter(this._vertex_shader, gl.COMPILE_STATUS)) {
-                alert(gl.getShaderInfoLog(this._vertex_shader));
+            this._vertex_shader = this._gl.createShader(this._gl.VERTEX_SHADER);
+            this._gl.shaderSource(this._vertex_shader, this._vertex_source);
+            this._gl.compileShader(this._vertex_shader);
+            if (!this._gl.getShaderParameter(this._vertex_shader, this._gl.COMPILE_STATUS)) {
+                alert(this._gl.getShaderInfoLog(this._vertex_shader));
                 return ;
             }
 
-            this._fragment_shader = gl.createShader(gl.FRAGMENT_SHADER);
-            gl.compileShader(this._fragment_shader, this._fragment_source);
-            if (!gl.getShaderParameter(this._fragment_shader, gl.COMPILE_STATUS)) {
-                alert(gl.getShaderInfoLog(this._fragment_shader));
+            this._fragment_shader = this._gl.createShader(this._gl.FRAGMENT_SHADER);
+            this._gl.shaderSource(this._fragment_shader, this._fragment_source);
+            this._gl.compileShader(this._fragment_shader, this._fragment_source);
+            if (!this._gl.getShaderParameter(this._fragment_shader, this._gl.COMPILE_STATUS)) {
+                alert(this._gl.getShaderInfoLog(this._fragment_shader));
                 return ;
             }
 
-            this._program = gl.createProgram();
-            gl.attachShader(this._program, this._vertex_shader);
-            gl.attachShader(this._program, this._fragment_shader);
-            gl.linkProgram(this._program);
-            if (!gl.getProgramParameter(this._program, gl.LINK_STATUS)){
+            this._program = this._gl.createProgram();
+            this._gl.attachShader(this._program, this._vertex_shader);
+            this._gl.attachShader(this._program, this._fragment_shader);
+            this._gl.linkProgram(this._program);
+            if (!this._gl.getProgramParameter(this._program, this._gl.LINK_STATUS)){
                 alert("Could not initialise shaders");
                 return ;
             }
@@ -83,19 +94,22 @@ define([], function () {
     class PosProgram extends _BaseProgram{
 
         constructor(gl){
-            vertex_source = `
-                attribute vec4 a_position;
+            let vertex_source =
+                `#version 300 es
+                in vec4 position;
                 void main(){
-                    gl_Position = a_position;
-                }
-                `;
-            fragment_source = `
+                    gl_Position = position;
+                    gl_PointSize = 10.0;
+                }`;
+            let fragment_source =
+                `#version 300 es
+                precision mediump float;
+                out vec4 frag_color;
                 void main(){
-                    gl_FragColor = vec4(1,0,0,1);
-                }
-                `;
+                    frag_color = vec4(0.5,0.5,0.0,1.0);
+                }`;
             super(gl, vertex_source, fragment_source);
-            this.a_position = gl.getAttribLocation(this._program, 'a_position');
+            this.position = gl.getAttribLocation(this._program, 'position');
 
         }
 

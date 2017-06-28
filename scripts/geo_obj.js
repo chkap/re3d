@@ -21,10 +21,10 @@ define(['program'], function (mod_program) {
        }
 
        render(prog_manager){
-           prog_manager.selectProgram(mod_program.PosProgram);
-           let cur_gl = prog_manager.getWebglContext();
-           cur_gl.vertexAttrib3f(prog_manager.a_position, this.x, this.y, this.z);
-           cur_gl.drawArrays(gl.POINTS, 0, 1);
+           let cur_program = prog_manager.selectProgram(mod_program.PosProgram);
+           let gl = prog_manager.gl;
+           gl.vertexAttrib3f(cur_program.position, this.x, this.y, this.z);
+           gl.drawArrays(gl.POINTS, 0, 1);
        }
    }
 
