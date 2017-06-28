@@ -5,13 +5,15 @@
 
 define([], function () {
 
-
-
     class ProgramManager{
 
         constructor(gl){
             this._gl = gl;
             this._program_map = new Map();
+        }
+
+        getWebglContext(){
+            return this._gl;
         }
 
         _createProgram(prog_class){
@@ -93,6 +95,8 @@ define([], function () {
                 }
                 `;
             super(gl, vertex_source, fragment_source);
+            this.a_position = gl.getAttribLocation(this._program, 'a_position');
+
         }
 
         enable(){
@@ -108,7 +112,7 @@ define([], function () {
 
     return {
         ProgramManager,
-        BaseProgram,
+        PosProgram,
     }
 
 
