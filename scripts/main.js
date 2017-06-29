@@ -3,12 +3,8 @@
  */
 
 
-require.config({
-    baseUrl: 'scripts/',
-});
 
-
-require(['system', 'geo_obj'], (mod_system, mod_geo_obj)=>{
+require(['./system', './geo_obj'], (mod_system, mod_geo_obj)=>{
     "use strict";
 
     function startSystem(){

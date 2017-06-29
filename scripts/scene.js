@@ -3,7 +3,7 @@
  */
 
 
-define(['program'], function (mod_program) {
+define(['./program'], function (mod_program) {
 
     class Scene{
 

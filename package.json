@@ -1,0 +1,16 @@
+{
+  "name": "re3d",
+  "version": "1.0.0",
+  "description": "a simple 3D library for javascript.",
+  "main": "./scripts/main.js",
+  "dependencies": {
+    "webpack": "^3.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "author": "chkap <chkhappy@hotmail.com>",
+  "license": "ISC"
+}

@@ -4,7 +4,7 @@
  * Created by chkap on 17-6-20.
  */
 
-define(['camera', 'scene'], (mod_camera, mod_scene)=>{
+define(['./camera', './scene'], (mod_camera, mod_scene)=>{
 
     class System{
         constructor(canvas) {
