@@ -14,10 +14,12 @@ function startSystem(){
             return;
         }
 
-        for (let i = 0; i< 100; i++){
-            let pot = new mod_geo_obj.GeoPoint(Math.random()*10, Math.random()*10, Math.random()*10);
-            system.scene.addObject(pot);
-        }
+        let pot = new mod_geo_obj.GeoPoint(0,0,0);
+        system.scene.addObject(pot);
+        // for (let i = 0; i< 100; i++){
+        //     let pot = new mod_geo_obj.GeoPoint(Math.random(), Math.random(), Math.random());
+        //     system.scene.addObject(pot);
+        // }
         system.startRendering();
     }
 }

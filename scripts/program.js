@@ -94,10 +94,14 @@ class PosProgram extends _BaseProgram{
     constructor(gl){
         let vertex_source =
             `#version 300 es
-            in vec4 position;
+            precision mediump float;
+            precision mediump int;
+            in vec3 position;
+            uniform mat4 projection_view;
             void main(){
-                gl_Position = position;
-                gl_PointSize = 1000.0;
+                vec4 pos = vec4(position, 1.0);
+                gl_Position = projection_view * pos;
+                gl_PointSize = 10.0;
             }`;
         let fragment_source =
             `#version 300 es
@@ -108,6 +112,7 @@ class PosProgram extends _BaseProgram{
             }`;
         super(gl, vertex_source, fragment_source);
         this.position = gl.getAttribLocation(this._program, 'position');
+        this.projection_view = gl.getUniformLocation(this._program, 'projection_view');
 
     }
 
