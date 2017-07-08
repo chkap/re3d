@@ -4,7 +4,6 @@
   "description": "a simple 3D library for javascript.",
   "main": "./scripts/main.js",
   "dependencies": {
-    "webpack": "^3.1.0"
   },
   "devDependencies": {
     "webpack": "^3.1.0"
