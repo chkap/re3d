@@ -4,6 +4,8 @@
 
 "use strict";
 
+const {vec3, mat4} = require('gl-matrix');
+
 class Camera {
     constructor(){
         this._view_mat = mat4.create();

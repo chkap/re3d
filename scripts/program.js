@@ -21,7 +21,7 @@ class ProgramManager{
     }
 
     selectProgram(prog_class){
-        if (Object.getPrototypeOf(prog_class) !== _BaseProgram){
+        if (Object.getPrototypeOf(prog_class) !== BaseProgram){
             alert('cannot create a program not defined.');
             return;
         }
@@ -42,7 +42,7 @@ class ProgramManager{
     }
 }
 
-class _BaseProgram{
+class BaseProgram{
     constructor(gl, vertex_source, fragment_source){
         this._gl = gl;
         if (!this._gl){
@@ -85,11 +85,11 @@ class _BaseProgram{
         alert('You cannot enable the _BaseProgram. Enable a subclass program of it.');
     }
 
-    static get programName(){ return '_BaseProgram';}
+    static get programName(){ return 'BaseProgram';}
 
 }
 
-class PosProgram extends _BaseProgram{
+class PosProgram extends BaseProgram{
 
     constructor(gl){
         let vertex_source =
@@ -101,7 +101,7 @@ class PosProgram extends _BaseProgram{
             void main(){
                 vec4 pos = vec4(position, 1.0);
                 gl_Position = projection_view * pos;
-                gl_PointSize = 10.0;
+                gl_PointSize = 3.0;
             }`;
         let fragment_source =
             `#version 300 es
@@ -127,4 +127,4 @@ class PosProgram extends _BaseProgram{
     static get programName(){ return 'PosProgram'}
 }
 
-export {ProgramManager, PosProgram}
+export {ProgramManager, BaseProgram, PosProgram}
