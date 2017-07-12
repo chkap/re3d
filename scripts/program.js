@@ -97,23 +97,27 @@ class PosProgram extends BaseProgram{
             precision mediump float;
             precision mediump int;
             in vec3 position;
+            in vec3 color;
+            out vec3 frag_color;
             uniform mat4 projection_view;
             void main(){
                 vec4 pos = vec4(position, 1.0);
                 gl_Position = projection_view * pos;
-                gl_PointSize = 3.0;
+                gl_PointSize = 5.0;
+                frag_color = color;
             }`;
         let fragment_source =
             `#version 300 es
             precision mediump float;
-            out vec4 frag_color;
+            in vec3 frag_color;
+            out vec4 output_color;
             void main(){
-                frag_color = vec4(0.5,0.5,0.0,1.0);
+                output_color = vec4(frag_color,1.0);
             }`;
         super(gl, vertex_source, fragment_source);
         this.position = gl.getAttribLocation(this._program, 'position');
         this.projection_view = gl.getUniformLocation(this._program, 'projection_view');
-
+        this.color = gl.getAttribLocation(this._program, 'color');
     }
 
     enable(){

@@ -17,7 +17,8 @@ function startSystem(){
         let pot = new mod_geo_obj.GeoPoint(0,0,0);
         system.scene.addObject(pot);
         for (let i = 0; i< 100; i++){
-            let pot = new mod_geo_obj.GeoPoint(Math.random() - 0.5, Math.random()-0.5, Math.random()-0.5);
+            let pot = new mod_geo_obj.GeoPoint(Math.random() - 0.5, Math.random()-0.5, Math.random()-0.5,
+                                                Math.random(), Math.random(), Math.random());
             system.scene.addObject(pot);
         }
         system.startRendering();

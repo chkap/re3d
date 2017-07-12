@@ -4,7 +4,10 @@
 
 "use strict";
 
+
 const {vec3, mat4} = require('gl-matrix');
+
+import * as mod_math_tool from './math_tool'
 
 class Camera {
     constructor(){
@@ -38,9 +41,9 @@ class Camera {
     }
 
     look_at(eye, center, up){
-        vec3.copy(this._view_eye, eye);
-        vec3.copy(this._view_center, center);
-        vec3.copy(this._view_up, up);
+        this.eye = eye;
+        this.center = center;
+        this.up = up;
         this._notify_view_changed()
     }
 
@@ -55,6 +58,7 @@ class Camera {
 
     get view_mat(){
         if (this._view_changed){
+
             mat4.lookAt(this._view_mat, this._view_eye, this._view_center, this._view_up);
             this._view_changed = false;
         }
@@ -75,36 +79,85 @@ class Camera {
         this._notify_projection_changed();
     }
 
+    get fovy(){ return this._projection_fovy;}
+
     set aspect(_aspect){
         this._projection_aspect = _aspect;
         this._notify_projection_changed();
     }
+
+    get aspect(){ return this._projection_aspect;}
 
     set near(_near){
         this._projection_near = _near;
         this._notify_projection_changed();
     }
 
+    get near() { return this._projection_near;}
+
     set far(_far){
         this._projection_far = _far;
         this._notify_projection_changed();
     }
+
+    get far(){ return this._projection_far;}
 
     set eye(_eye){
         vec3.copy(this._view_eye, _eye);
         this._notify_view_changed();
     }
 
+    get eye(){ return this._view_eye;}
+
     set center(_center){
         vec3.copy(this._view_center,_center);
         this._notify_view_changed();
     }
 
+    get center(){ return this._view_center;}
+
     set up(_up){
-        vec3.copy(this._view_up, _up);
+        const right_vec = vec3.create();
+        const front_vec = this.front;
+        vec3.cross(right_vec, front_vec, _up);
+        vec3.cross(this._view_up, right_vec, front_vec);
+        mod_math_tool.normalize_vec3(this._view_up);
         this._notify_view_changed();
     }
 
+    get up(){
+        return vec3.clone(this._view_up);
+    }
+
+    get front(){
+        const front_vec = vec3.create();
+        front_vec[0] = this._view_center[0] - this._view_eye[0];
+        front_vec[1] = this._view_center[1] - this._view_eye[1];
+        front_vec[2] = this._view_center[2] - this._view_eye[2];
+        mod_math_tool.normalize_vec3(front_vec);
+        return front_vec;
+    }
+
+    get right(){
+        const right_vec = vec3.create();
+        vec3.cross(right_vec, this.front, this._view_up);
+        mod_math_tool.normalize_vec3(right_vec);
+        return right_vec;
+    }
+
+    get x_direction(){
+        return this.right;
+    }
+    get y_direction(){
+        return this.up;
+    }
+    get z_direction(){
+        const front = this.front;
+        front[0] *= -1;
+        front[1] *= -1;
+        front[2] *= -1;
+        return front;
+    }
 }
 
 
