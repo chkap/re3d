@@ -7,6 +7,7 @@ import * as mod_camera from './camera.js'
 import * as mod_scene from './scene.js'
 
 class System{
+
     constructor(canvas) {
         let gl = canvas.getContext('webgl2');
         if (!gl) {
@@ -21,8 +22,11 @@ class System{
         this._scene = new mod_scene.Scene(this);
         this._camera = new mod_camera.Camera();
         this._do_rendering = true;
+
+        this._ui_handler_map = new Map();
     }
 
+    static get handle_func_names() {return ['mousemove', 'wheel', 'key'];}
     get gl(){return this._gl;}
     get scene() {return this._scene;}
     get camera() {return this._camera;}
@@ -53,6 +57,33 @@ class System{
 
     stopRendering(){
         this._do_rendering = false;
+    }
+
+    addUiHandler(handler){
+        if (this._ui_handler_map.has(handler)){
+            return ;
+        }
+        const func_map = new Map();
+        const _system = this;
+        for(let handle_name of System.handle_func_names){
+            if(`handle_${handle_name}` in handler){
+                func_map.set(handle_name, function(event){
+                    handler[`handle_${handle_name}`](event, _system);
+                });
+                this._canvas[`on${handle_name}`] = func_map[handle_name];
+            }
+        }
+        this._ui_handler_map.set(handler, func_map);
+    }
+
+    removeUiHandler(handler){
+        if (this._ui_handler_map.has(handler)){
+            const func_map = this._ui_handler_map[handler];
+            for(let [handle_name, handle_func] of func_map){
+                this._canvas.removeEventListener(handle_name, handle_func);
+            }
+            this._ui_handler_map.delete(handler);
+        }
     }
 
 }

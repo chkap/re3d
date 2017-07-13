@@ -4,6 +4,7 @@
 
 import * as mod_system from './system.js'
 import * as mod_geo_obj from './geo_obj.js'
+import * as mod_ui_handler from './ui_handler'
 
 function startSystem(){
     let canvas = document.getElementById('canvas');
@@ -21,6 +22,8 @@ function startSystem(){
                                                 Math.random(), Math.random(), Math.random());
             system.scene.addObject(pot);
         }
+        let uihandler = new mod_ui_handler.SphereCameraHandler();
+        system.addUiHandler(uihandler);
         system.startRendering();
     }
 }
