@@ -67,12 +67,15 @@ class System{
         const _system = this;
         for(let handle_name of System.handle_func_names){
             if(`handle_${handle_name}` in handler){
-                func_map.set(handle_name, function(event){
-                    handler[`handle_${handle_name}`](event, _system);
+                func_map.set(handle_name, function(e){
+                    handler[`handle_${handle_name}`](e, _system);
                 });
-                this._canvas[`on${handle_name}`] = func_map[handle_name];
+                this._canvas.addEventListener(handle_name, func_map.get(handle_name));
             }
         }
+        // this._canvas.addEventListener('mousemove', function (e) {
+        //     handler.handle_mousemove(e, _system);
+        // });
         this._ui_handler_map.set(handler, func_map);
     }
 

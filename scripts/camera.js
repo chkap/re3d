@@ -104,6 +104,7 @@ class Camera {
 
     set eye(_eye){
         vec3.copy(this._view_eye, _eye);
+        this.up = this._view_up; // ensure the orthogonality of up vector.
         this._notify_view_changed();
     }
 
@@ -111,6 +112,7 @@ class Camera {
 
     set center(_center){
         vec3.copy(this._view_center,_center);
+        this.up = this._view_up; // ensure the orthogonality of up vector.
         this._notify_view_changed();
     }
 
