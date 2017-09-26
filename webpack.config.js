@@ -6,10 +6,11 @@
 const path = require('path');
 
 module.exports = {
-    entry: './scripts/main.js',
+    entry: './scripts/re3d.js',
     output: {
+        library: 're3d',
         path: path.resolve(__dirname, 'dist'),
-        filename: "re3d_main.js",
+        filename: "re3d.js",
     }
 };
 
