@@ -18,6 +18,7 @@ export class SphereCameraHandler {
         this.fovy_max = 150/180*Math.PI;
 
         this.enable = true;
+        // this.buttons = buttons;
     }
 
     // set radius(r){

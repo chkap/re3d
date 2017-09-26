@@ -21,6 +21,7 @@ function startSystem(){
             system.scene.addObject(pot);
         }
         let uihandler = new re3d.ui_handler.SphereCameraHandler();
+        uihandler.buttons = 0;
         system.addUiHandler(uihandler);
         system.startRendering();
     }
