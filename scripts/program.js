@@ -77,17 +77,22 @@ class BaseProgram{
         this._gl.linkProgram(this._program);
         if (!this._gl.getProgramParameter(this._program, this._gl.LINK_STATUS)){
             alert("Could not initialise shaders");
-            return ;
         }
     }
 
     enable(){
-        alert('You cannot enable the _BaseProgram. Enable a subclass program of it.');
+        if (this._gl && this._program){
+            this._gl.useProgram(this._program);
+        }else{
+            alert('The program is not valid.')
+        }
     }
 
     static get programName(){ return 'BaseProgram';}
 
 }
+
+
 
 class PosProgram extends BaseProgram{
 
@@ -97,35 +102,26 @@ class PosProgram extends BaseProgram{
             precision mediump float;
             precision mediump int;
             in vec3 position;
-            in vec3 color;
-            out vec3 frag_color;
             uniform mat4 projection_view;
             void main(){
                 vec4 pos = vec4(position, 1.0);
                 gl_Position = projection_view * pos;
                 gl_PointSize = 5.0;
-                frag_color = color;
             }`;
         let fragment_source =
             `#version 300 es
             precision mediump float;
-            in vec3 frag_color;
+            //uniform vec3 color;
+            uniform vec3 color;
             out vec4 output_color;
             void main(){
-                output_color = vec4(frag_color,1.0);
+                output_color = vec4(color,1.0);
             }`;
         super(gl, vertex_source, fragment_source);
         this.position = gl.getAttribLocation(this._program, 'position');
         this.projection_view = gl.getUniformLocation(this._program, 'projection_view');
-        this.color = gl.getAttribLocation(this._program, 'color');
-    }
-
-    enable(){
-        if (this._gl && this._program){
-            this._gl.useProgram(this._program);
-        }else{
-            alert('The program is not valid.')
-        }
+        this.color = gl.getUniformLocation(this._program, 'color');
+        // this.color = gl.getAttribLocation(this._program, 'color');
     }
 
     static get programName(){ return 'PosProgram'}
