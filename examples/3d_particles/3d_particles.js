@@ -13,11 +13,11 @@ function initSystem(){
             return;
         }
 
-        let pot = new re3d.geo_obj.GeoPoint(0,0,0);
+        let pot = new re3d.geo_obj.GeoPoint(system,0,0,0);
         system.scene.addObject(pot);
         for (let i = 0; i< 100; i++){
-            let pot = new re3d.geo_obj.GeoPoint(Math.random() - 0.5, Math.random()-0.5, Math.random()-0.5,
-                                                Math.random(), Math.random(), Math.random());
+            let pot = new re3d.geo_obj.GeoPoint(system,Math.random() - 0.5, Math.random()-0.5, Math.random()-0.5,
+                                                Math.random(), Math.random(), Math.random(), Math.random()*10);
             system.scene.addObject(pot);
         }
         let uihandler = new re3d.ui_handler.SphereCameraHandler();
@@ -31,4 +31,3 @@ if(document.readyState === 'complete'){
 }else{
     window.addEventListener('load', initSystem)
 }
-

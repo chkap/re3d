@@ -5,6 +5,7 @@
  */
 import * as mod_camera from './camera.js'
 import * as mod_scene from './scene.js'
+import {ProgramManager} from './program'
 
 class System{
 
@@ -21,6 +22,7 @@ class System{
         this._viewport_height = 0;
         this._scene = new mod_scene.Scene(this);
         this._camera = new mod_camera.Camera();
+        this._prog_manager = new ProgramManager(this._gl);
         this._do_rendering = true;
 
         this._ui_handler_map = new Map();
@@ -30,6 +32,7 @@ class System{
     get gl(){return this._gl;}
     get scene() {return this._scene;}
     get camera() {return this._camera;}
+    get prog_manager() {return this._prog_manager;}
 
     _renderScene(){
         if (this._viewport_width !== this._canvas.clientWidth || this._viewport_height !== this._canvas.clientHeight){

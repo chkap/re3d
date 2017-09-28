@@ -8,7 +8,6 @@ class Scene{
 
     constructor(system){
         this._system = system;
-        this._program_manager = new mod_program.ProgramManager(this._system.gl);
         this.clear_color = [0.9,0.9,0.9,1.0];
         this._obj_set = new Set();
     }
@@ -27,7 +26,7 @@ class Scene{
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         for(let obj of this._obj_set){
-            obj.render(this._program_manager, projection_view_mat);
+            obj._render(projection_view_mat);
         }
     }
 }

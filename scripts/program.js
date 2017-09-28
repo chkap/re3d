@@ -8,37 +8,27 @@ class ProgramManager{
     constructor(gl){
         this._gl = gl;
         this._program_map = new Map();
-        this._current_program = '';
     }
 
     get gl() {return this._gl;}
 
     _createProgram(prog_class){
-        if(this._program_map.has(prog_class.programName))
-            return;
         let program_instance = new prog_class(this._gl);
-        this._program_map.set(prog_class.programName, program_instance)
+        this._program_map.set(prog_class, program_instance)
     }
 
     selectProgram(prog_class){
         if (Object.getPrototypeOf(prog_class) !== BaseProgram){
-            alert('cannot create a program not defined.');
+            alert('cannot create a program not inherited from BseProgram.');
             return;
         }
-        if (!this._program_map.has(prog_class.programName)){
+        if (!this._program_map.has(prog_class)){
             this._createProgram(prog_class);
-            this._program_map.get(prog_class.programName).enable();
-            this._current_program = prog_class.programName;
+            this._program_map.get(prog_class).enable();
         }
-        let cur_program = this._program_map.get(prog_class.programName);
-        if (prog_class.programName !== this._current_program){
-            cur_program.enable();
-            this._current_program = prog_class.programName;
-            return cur_program;
-        }else{
-            return cur_program;
-        }
-
+        let cur_program = this._program_map.get(prog_class);
+        cur_program.enable();
+        return cur_program;
     }
 }
 
@@ -88,8 +78,6 @@ class BaseProgram{
         }
     }
 
-    static get programName(){ return 'BaseProgram';}
-
 }
 
 
@@ -106,7 +94,6 @@ class PosProgram extends BaseProgram{
             void main(){
                 vec4 pos = vec4(position, 1.0);
                 gl_Position = projection_view * pos;
-                gl_PointSize = 5.0;
             }`;
         let fragment_source =
             `#version 300 es
@@ -123,8 +110,39 @@ class PosProgram extends BaseProgram{
         this.color = gl.getUniformLocation(this._program, 'color');
         // this.color = gl.getAttribLocation(this._program, 'color');
     }
-
-    static get programName(){ return 'PosProgram'}
 }
 
-export {ProgramManager, BaseProgram, PosProgram}
+class PointProgram extends BaseProgram{
+
+    constructor(gl){
+        let vertex_source =
+            `#version 300 es
+            precision mediump float;
+            precision mediump int;
+            in vec3 position;
+            uniform mat4 projection_view;
+            uniform float point_size;
+            void main(){
+                vec4 pos = vec4(position, 1.0);
+                gl_Position = projection_view * pos;
+                gl_PointSize = point_size;
+            }`;
+        let fragment_source =
+            `#version 300 es
+            precision mediump float;
+            //uniform vec3 color;
+            uniform vec3 color;
+            out vec4 output_color;
+            void main(){
+                output_color = vec4(color,1.0);
+            }`;
+        super(gl, vertex_source, fragment_source);
+        this.position = gl.getAttribLocation(this._program, 'position');
+        this.projection_view = gl.getUniformLocation(this._program, 'projection_view');
+        this.color = gl.getUniformLocation(this._program, 'color');
+        this.point_size = gl.getUniformLocation(this._program, 'point_size');
+        // this.color = gl.getAttribLocation(this._program, 'color');
+    }
+}
+
+export {ProgramManager, BaseProgram, PosProgram, PointProgram}
