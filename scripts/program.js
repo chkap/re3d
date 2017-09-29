@@ -81,7 +81,6 @@ class BaseProgram{
 }
 
 
-
 class PosProgram extends BaseProgram{
 
     constructor(gl){
@@ -145,4 +144,40 @@ class PointProgram extends BaseProgram{
     }
 }
 
-export {ProgramManager, BaseProgram, PosProgram, PointProgram}
+class PointColorProgram extends BaseProgram{
+
+    constructor(gl){
+        let vertex_source =
+            `#version 300 es
+            precision mediump float;
+            precision mediump int;
+            in vec3 position;
+            in vec3 color;
+            uniform mat4 projection_view;
+            uniform float point_size;
+            out vec3 frag_color;
+            void main(){
+                vec4 pos = vec4(position, 1.0);
+                gl_Position = projection_view * pos;
+                gl_PointSize = point_size;
+                frag_color = color;
+            }`;
+        let fragment_source =
+            `#version 300 es
+            precision mediump float;
+            //uniform vec3 color;
+            in vec3 frag_color;
+            out vec4 output_color;
+            void main(){
+                output_color = vec4(frag_color,1.0);
+            }`;
+        super(gl, vertex_source, fragment_source);
+        this.position = gl.getAttribLocation(this._program, 'position');
+        this.color = gl.getAttribLocation(this._program, 'color');
+        this.projection_view = gl.getUniformLocation(this._program, 'projection_view');
+        this.point_size = gl.getUniformLocation(this._program, 'point_size');
+        // this.color = gl.getAttribLocation(this._program, 'color');
+    }
+}
+
+export {ProgramManager, BaseProgram, PosProgram, PointProgram, PointColorProgram}

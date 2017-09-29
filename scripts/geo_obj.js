@@ -18,16 +18,21 @@ class GeoObject{
    get gl(){ return this._system.gl;}
 
    prepare_vao(){
-
-       this._ready = true;
    }
 
    get ready(){
        return this._ready;
    }
 
+   invalidate_vao(){
+       return this._ready = false;
+   }
+
    _render(projection_view_mat){
-       if(!this.ready)  this.prepare_vao();
+       if(!this.ready)  {
+           this.prepare_vao();
+           this._ready = true;
+       }
 
        if(this._vao === null) {
            console.error('vao not inited!');
@@ -73,8 +78,6 @@ class GeoPoint extends GeoObject{
        gl.vertexAttribPointer(this.prog.position, 3, gl.FLOAT, false, 3*4, 0);
        gl.enableVertexAttribArray(this.prog.position);
        gl.bindVertexArray(null);
-
-       return true;
    }
 
    draw(projection_view_mat){
@@ -88,6 +91,46 @@ class GeoPoint extends GeoObject{
    }
 
 }
+
+
+class GeoPointGroup extends GeoObject{
+    constructor(system, point_group_data, point_size=1.0, prog_class=mod_program.PointColorProgram){
+        super(system, prog_class);
+        if(! point_group_data instanceof Float32Array) console.error('need Float32Array to construct GeoPointGroup.');
+        this.data = point_group_data;
+        this.length = Math.floor(this.data.length / 6);
+        this.sz = point_size;
+    }
+
+    prepare_vao(){
+        let gl = this.gl;
+        if(this._vbo === null){
+            this._vbo = gl.createBuffer();
+        }
+        if(this._vao === null){
+            this._vao = gl.createVertexArray();
+        }
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._vbo);
+        gl.bufferData(gl.ARRAY_BUFFER, this.data, gl.STATIC_DRAW);
+
+        gl.bindVertexArray(this._vao);
+        gl.vertexAttribPointer(this.prog.position, 3, gl.FLOAT, false, 6*4, 0);
+        gl.enableVertexAttribArray(this.prog.position);
+        gl.vertexAttribPointer(this.prog.color, 3, gl.FLOAT, false, 6*4, 3*4);
+        gl.enableVertexAttribArray(this.prog.color);
+        gl.bindVertexArray(null);
+    }
+
+    draw(projection_view_mat){
+        let program = this.prog;
+        let gl = this.gl;
+        gl.uniform1f(program.point_size, this.sz);
+        gl.uniformMatrix4fv(program.projection_view, false, projection_view_mat);
+        gl.drawArrays(gl.POINTS, 0, this.length);
+    }
+}
+
 
 class GeoTriangle extends GeoObject{
     constructor(system, points_data, color, point_size=1.0, prog_class=mod_program.PosProgram){
@@ -122,29 +165,6 @@ class GeoTriangle extends GeoObject{
         gl.uniformMatrix4fv(this.prog.projection_view, false, projection_view_mat);
         gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
-
-    // render(prog_manager, projection_view_mat){
-    //     let cur_program = prog_manager.selectProgram(mod_program.PosProgram);
-    //     let gl = prog_manager.gl;
-    //     if(this._buffer === null){
-    //         this._buffer = gl.createBuffer();
-    //     }
-    //     gl.bindBuffer(gl.ARRAY_BUFFER, this._buffer);
-    //     gl.bufferData(gl.ARRAY_BUFFER, this.data, gl.STATIC_DRAW);
-    //
-    //     if(this._vao === null){
-    //         this._vao = gl.createVertexArray();
-    //     }
-    //     gl.bindVertexArray(this._vao);
-    //     gl.vertexAttribPointer(cur_program.position, 3, gl.FLOAT, false, 3*4, 0);
-    //     gl.enableVertexAttribArray(cur_program.position);
-    //
-    //     gl.uniform3fv(cur_program.color, this.color);
-    //     gl.uniformMatrix4fv(cur_program.projection_view, false, projection_view_mat);
-    //     gl.drawArrays(gl.TRIANGLES, 0, 3);
-    //
-    //     gl.bindVertexArray(null);
-    // }
 }
 
-export {GeoObject, GeoPoint, GeoTriangle};
+export {GeoObject, GeoPoint, GeoTriangle, GeoPointGroup};

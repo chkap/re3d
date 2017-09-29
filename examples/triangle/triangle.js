@@ -1,4 +1,8 @@
 /**
+ * Created by chkap on 17-9-29.
+ */
+
+/**
  * Created by chkap on 2017/9/27.
  */
 
@@ -33,5 +37,6 @@ if(document.readyState === 'complete'){
 }else{
     window.addEventListener('load', initSystem)
 }
+
 
 
