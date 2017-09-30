@@ -10,6 +10,8 @@ import {Scene} from './scene'
 import {System} from './system'
 import * as ui_handler from './ui_handler'
 
+let glmatrix = require('gl-matrix');
+
 
 export {
     Camera,
@@ -18,7 +20,8 @@ export {
     program,
     Scene,
     System,
-    ui_handler
+    ui_handler,
+    glmatrix,
 };
 
 

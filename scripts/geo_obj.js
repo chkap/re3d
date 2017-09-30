@@ -31,7 +31,6 @@ class GeoObject{
    _render(projection_view_mat){
        if(!this.ready)  {
            this.prepare_vao();
-           this._ready = true;
        }
 
        if(this._vao === null) {
@@ -78,6 +77,7 @@ class GeoPoint extends GeoObject{
        gl.vertexAttribPointer(this.prog.position, 3, gl.FLOAT, false, 3*4, 0);
        gl.enableVertexAttribArray(this.prog.position);
        gl.bindVertexArray(null);
+       this._ready = true;
    }
 
    draw(projection_view_mat){
@@ -120,6 +120,7 @@ class GeoPointGroup extends GeoObject{
         gl.vertexAttribPointer(this.prog.color, 3, gl.FLOAT, false, 6*4, 3*4);
         gl.enableVertexAttribArray(this.prog.color);
         gl.bindVertexArray(null);
+        this._ready = true;
     }
 
     draw(projection_view_mat){
@@ -156,6 +157,7 @@ class GeoTriangle extends GeoObject{
         gl.vertexAttribPointer(this.prog.position, 3, gl.FLOAT, false, 3 * 4, 0);
         gl.enableVertexAttribArray(this.prog.position);
         gl.bindVertexArray(null);
+        this._ready = true;
     }
 
     draw(projection_view_mat){

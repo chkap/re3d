@@ -26,6 +26,7 @@ class System{
         this._do_rendering = true;
 
         this._ui_handler_map = new Map();
+        this._todo_list_before_render = new Set();
     }
 
     static get handle_func_names() {return ['mousemove', 'wheel', 'key'];}
@@ -47,6 +48,9 @@ class System{
     }
 
     renderScene(timestamp){
+        for(let func of this._todo_list_before_render){
+            func();
+        }
         this._renderScene();
         if (this._do_rendering){
             window.requestAnimationFrame((timestamp)=>this.renderScene(timestamp));
@@ -60,6 +64,13 @@ class System{
 
     stopRendering(){
         this._do_rendering = false;
+    }
+
+    addTodoBeforeRender(func){
+        this._todo_list_before_render.add(func);
+    }
+    removeTodoBeforeRender(func){
+        this._todo_list_before_render.delete(func);
     }
 
     addUiHandler(handler){
