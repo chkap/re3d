@@ -3,11 +3,11 @@
  */
 
 let cfg ={
-    initial_speed_range: [0.001, 0.005],
-    spring_k: 1,
+    initial_speed_range: [100, 100],
+    spring_k: 10,
     gravitation_G: 0.001,
     gravitation_min_r: 0.01,
-    wind_drag_lambda: 0.01,
+    wind_drag_lambda: 0.00,
 };
 
 
@@ -31,9 +31,18 @@ function initSystem(){
             this._num = num;
             this._state = state;
             this._g_source_pos = null;
+            this._last_update_time = null;
         }
 
         update_particles(){
+            if(this._last_update_time === null){
+                this._last_update_time = window.performance.now();
+                return ;
+            }
+
+            let cur_t = window.performance.now();
+            let dt = (cur_t - this._last_update_time)*1e-6;
+            this._last_update_time = cur_t;
             for(let i=0; i<this._num; i++){
                 const vec3 = re3d.glmatrix.vec3;
                 let pos = this.data.subarray(i*6, i*6+3);
@@ -41,11 +50,17 @@ function initSystem(){
                 let org_pos = this._state.subarray(i*6, i*6+3);
                 let f = InteractiveSphereParticles.cal_force(pos, org_pos);
 
-                vec3.add(v,v,f);
-                vec3.add(pos, v);
+                let ds = vec3.create();
+                vec3.scale(ds, v, dt);
+                vec3.add(pos, pos, ds);
+
+                let dv = vec3.create();
+                vec3.scale(dv, f, dt);
+                vec3.add(v,v,dv);
                 this.data.set(pos, i*6);
                 this._state.set(v, i*6+3);
             }
+            this.invalidate_vao();
         }
 
         static cal_force(pos, org_pos){
