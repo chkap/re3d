@@ -4,5 +4,6 @@
 node_modules/
 package-lock.json
 data/
+dist/
 
 !dist/re3d.js
