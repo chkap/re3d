@@ -3,21 +3,21 @@
  */
 
 let cfg ={
-    initial_speed_range: [100, 100],
-    spring_k: 10,
-    gravitation_G: 0.001,
-    gravitation_min_r: 0.01,
-    wind_drag_lambda: 0.00,
+    initial_speed_range: [1, 5],
+    spring_k: 1,
+    wind_drag_lambda: 1,
+    wind_drag_v_th: 0.05,
 };
 
 
 
 function initSystem(){
+
     class InteractiveSphereParticles extends re3d.geo_obj.GeoPointGroup{
         constructor(system, num, r, point_size=1.0){
             let data = new Float32Array(num*6);
             for(let i=0; i<num; i++){
-                data.set(InteractiveSphereParticles.get_unform_sphere_point(r), i*6);
+                data.set(InteractiveSphereParticles.get_uniform_sphere_point(r), i*6);
                 let color = new Float32Array([Math.random(),Math.random(),Math.random()]);
                 data.set(color, i*6+3);
             }
@@ -26,11 +26,10 @@ function initSystem(){
             let state = new Float32Array(data);
             for(let i=0; i<num; i++){
                 let abs_speed = Math.random()*(cfg.initial_speed_range[1]-cfg.initial_speed_range[0])+cfg.initial_speed_range[0];
-                state.set(InteractiveSphereParticles.get_unform_sphere_point(abs_speed), i*6+3);
+                state.set(InteractiveSphereParticles.get_uniform_sphere_point(abs_speed), i*6+3);
             }
             this._num = num;
             this._state = state;
-            this._g_source_pos = null;
             this._last_update_time = null;
         }
 
@@ -41,14 +40,17 @@ function initSystem(){
             }
 
             let cur_t = window.performance.now();
-            let dt = (cur_t - this._last_update_time)*1e-6;
+            let dt = (cur_t - this._last_update_time)*1e-3;
             this._last_update_time = cur_t;
+            if(dt > 0.2){
+                return ;
+            }
             for(let i=0; i<this._num; i++){
                 const vec3 = re3d.glmatrix.vec3;
                 let pos = this.data.subarray(i*6, i*6+3);
                 let v = this._state.subarray(i*6+3, i*6+6);
                 let org_pos = this._state.subarray(i*6, i*6+3);
-                let f = InteractiveSphereParticles.cal_force(pos, org_pos);
+                let f = InteractiveSphereParticles.cal_force(pos, org_pos, v);
 
                 let ds = vec3.create();
                 vec3.scale(ds, v, dt);
@@ -63,7 +65,7 @@ function initSystem(){
             this.invalidate_vao();
         }
 
-        static cal_force(pos, org_pos){
+        static cal_force(pos, org_pos, v){
             const vec3 = re3d.glmatrix.vec3;
             let f = vec3.create();
             vec3.sub(f, org_pos, pos);
@@ -71,10 +73,20 @@ function initSystem(){
             let distance = vec3.dist(pos, org_pos);
             let f_abs = cfg.spring_k*Math.pow(distance, 0.5);
             vec3.scale(f, f, f_abs);
+
+            let abs_v = Math.sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]);
+            let wind_drag_f = vec3.create();
+            if(abs_v >= cfg.wind_drag_v_th){
+                let d_v = vec3.create();
+                vec3.normalize(d_v, v);
+                vec3.scale(wind_drag_f, d_v, -(abs_v-cfg.wind_drag_v_th)*cfg.wind_drag_lambda);
+            }
+
+            vec3.add(f, f, wind_drag_f);
             return f;
         }
 
-        static get_unform_sphere_point(r){
+        static get_uniform_sphere_point(r){
             let p = new Float32Array(3);
             let v1, v2, s;
             while(true){
