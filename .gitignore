@@ -7,3 +7,4 @@ data/
 dist/
 
 !dist/re3d.js
+!dist/re3d.min.js

@@ -6,11 +6,13 @@
   "dependencies": {},
   "devDependencies": {
     "gl-matrix": "^2.4.0",
-    "webpack": "^3.1.0"
+    "uglifyjs-webpack-plugin": "^1.0.0-beta.3",
+    "webpack": "^3.6.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "build": "webpack",
+    "build-min": "webpack --config webpack.config.min.js"
   },
   "author": "chkap <chkhappy@hotmail.com>",
   "license": "ISC"

@@ -11,6 +11,7 @@ module.exports = {
         library: 're3d',
         path: path.resolve(__dirname, 'dist'),
         filename: "re3d.js",
-    }
+    },
+    plugins: []
 };
 
