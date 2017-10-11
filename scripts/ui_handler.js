@@ -70,6 +70,7 @@ export class SphereCameraHandler {
         vec3.add(new_pos_vec, new_pos_vec, center);
 
         system.camera.eye = new_pos_vec;
+        event.stopPropagation();
     }
 
     handle_wheel(event, system){
@@ -82,6 +83,7 @@ export class SphereCameraHandler {
         fovy = (fovy>this.fovy_max) ? this.fovy_max:fovy;
         fovy = (fovy<this.fovy_min) ? this.fovy_min:fovy;
         system.camera.fovy = fovy;
+        event.stopPropagation();
     }
 }
 
